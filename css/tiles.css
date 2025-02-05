@@ -34,6 +34,7 @@
   font-size: 3rem;
   text-shadow: 0 0 .3rem var(--base-color);
   overflow: hidden;
+  font-weight: bold;
 }
 
 /* --- */
