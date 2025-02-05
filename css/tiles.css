@@ -20,7 +20,7 @@
 
 .tile-revealed {
   background-color: var(--hl-high-color);
-  box-shadow: 0 0 1.5rem black inset;
+  box-shadow: 0 0 1rem black inset;
 }
 
 .tile-flagged:hover {
@@ -30,6 +30,7 @@
 .tile-flagged img,
 .tile-bomb img {
   height: 60%;
+  filter: drop-shadow(0 0.1rem 0.2rem black);
 }
 
 .tile-hit {
@@ -54,11 +55,11 @@
 /* --- */
 
 .tile-number-1 {
-  color: blue;
+  color: dodgerblue;
 }
 
 .tile-number-2 {
-  color: green;
+  color: mediumseagreen;
 }
 
 .tile-number-3 {
