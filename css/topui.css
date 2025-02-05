@@ -3,5 +3,8 @@
 }
 
 #mine-counter, #timer {
-  /* font-size: 3rem; */
+  background-color: var(--overlay-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 0 0.5rem black, 0 0 0.2rem black inset;
 }
