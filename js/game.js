@@ -16,6 +16,9 @@ let timerInterval = null;
 let startTime = null;
 let gameOver = false; // when true, no further moves are allowed
 
+// Global variable to keep track of the tile that was pressed down.
+let activeTile = null;
+
 // Cache the grid container
 const gridContainer = document.getElementById("minesweeper-grid");
 
@@ -64,6 +67,7 @@ function startNewGame(r, c, mines) {
   minesCount = mines;
   firstClickDone = false;
   gameOver = false; // allow moves in the new game
+  activeTile = null;
 
   // Create an empty board (data only)
   board = createEmptyBoard(rows, cols);
@@ -83,8 +87,7 @@ function updateTimer() {
 }
 
 function getTileSize(rows, cols) {
-  // You might reserve some vertical space for the UI (like the top UI)
-  // For example, assume the grid can use 80% of the viewport height.
+  // Reserve some vertical space for the UI (for example, assume 80% of viewport height)
   const availableWidth = window.innerWidth;
   const availableHeight = window.innerHeight * 0.8;
 
@@ -98,10 +101,10 @@ function getTileSize(rows, cols) {
 function renderGrid(r, c) {
   gridContainer.innerHTML = ""; // Clear previous grid
 
-  // Compute the optimal tile size using the helper function.
+  // Compute the optimal tile size.
   const tileSize = getTileSize(r, c);
 
-  // Set a custom property on the grid container.
+  // Set a custom property on the grid container (used by CSS for scaling, e.g., font-size).
   gridContainer.style.setProperty('--tile-size', tileSize + 'px');
 
   // Set up the grid container using the computed tile size.
@@ -119,9 +122,8 @@ function renderGrid(r, c) {
       // Prevent default context menu on right-click.
       tile.addEventListener("contextmenu", (e) => e.preventDefault());
 
-      // mousedown (for highlighting)
+      // Add mousedown and mouseup handlers.
       tile.addEventListener("mousedown", handleMouseDown);
-      // mouseup (for handling click actions)
       tile.addEventListener("mouseup", handleMouseUp);
 
       gridContainer.appendChild(tile);
@@ -132,14 +134,16 @@ function renderGrid(r, c) {
 function handleMouseDown(e) {
   if (gameOver) return;
 
-  const tile = e.currentTarget;
-  const row = parseInt(tile.dataset.row);
-  const col = parseInt(tile.dataset.col);
+  // Record the tile that was pressed.
+  activeTile = e.currentTarget;
+
+  const row = parseInt(activeTile.dataset.row);
+  const col = parseInt(activeTile.dataset.col);
 
   // If this tile is flagged, do nothing.
   if (board[row][col].flagged) return;
 
-  // If the clicked tile is already revealed and is a number,
+  // If the clicked tile is already revealed and shows a number,
   // highlight all surrounding hidden (and unflagged) neighbors.
   if (board[row][col].revealed && board[row][col].number > 0) {
     const neighbors = getNeighbors(row, col);
@@ -152,21 +156,27 @@ function handleMouseDown(e) {
       }
     });
   } else {
-    // Otherwise, simply highlight the tile that was clicked.
-    tile.classList.add("tile-highlight");
+    // Otherwise, highlight the pressed tile.
+    activeTile.classList.add("tile-highlight");
   }
 }
-
 
 function handleMouseUp(e) {
   // Do nothing if the game has ended.
   if (gameOver) return;
 
-  const tile = e.currentTarget;
-  tile.classList.remove("tile-highlight");
+  // Ensure the mouseup is on the same tile that received mousedown.
+  if (e.currentTarget !== activeTile) {
+    // Remove highlight from the current tile if any.
+    e.currentTarget.classList.remove("tile-highlight");
+    return;
+  }
 
-  const row = parseInt(tile.dataset.row);
-  const col = parseInt(tile.dataset.col);
+  // Remove highlight from the active tile.
+  activeTile.classList.remove("tile-highlight");
+
+  const row = parseInt(activeTile.dataset.row);
+  const col = parseInt(activeTile.dataset.col);
 
   // If left-click on a flagged tile, do nothing.
   if (e.button === 0 && board[row][col].flagged) return;
@@ -210,7 +220,6 @@ function revealTile(row, col) {
     revealAllMines();
     clearInterval(timerInterval);
     gameOver = true;
-    // Optionally, update the UI to display a "Game Over" message.
   } else if (board[row][col].number > 0) {
     board[row][col].revealed = true;
     updateTileDOM(row, col);
@@ -381,6 +390,8 @@ window.addEventListener("resize", () => {
 
 document.addEventListener("mouseup", () => {
   // Remove the highlight from any tile that might be highlighted.
+  // Clear any lingering highlights and reset the active tile.
+  activeTile = null;
   const highlightedTiles = document.querySelectorAll(".tile-highlight");
   highlightedTiles.forEach(tile => tile.classList.remove("tile-highlight"));
 });
