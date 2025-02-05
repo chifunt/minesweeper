@@ -155,10 +155,13 @@ function handleMouseDown(e) {
         }
       }
     });
-  } else {
-    // Otherwise, highlight the pressed tile.
+  }
+  // Otherwise, if the tile is unrevealed but its number is not zero,
+  // highlight it. (If the number is zero—that is, the tile is "empty"—do nothing.)
+  else if (!board[row][col].revealed && board[row][col].number !== 0) {
     activeTile.classList.add("tile-highlight");
   }
+  // If it's empty (number === 0), then no highlight is added.
 }
 
 function handleMouseUp(e) {
