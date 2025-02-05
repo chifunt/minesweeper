@@ -1,7 +1,7 @@
 .tile {
-  width: 5em;
-  height: 5em;
-  border-radius: 1em;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9,16 +9,16 @@
 
 .tile-hidden {
   background-color: var(--subtle-color);
-  box-shadow: 0 0 1em var(--hl-med-color) inset;
+  box-shadow: 0 0 1rem var(--hl-med-color) inset;
 }
 
 .tile-hidden:hover {
-  box-shadow: 0 0 2.2em var(--hl-med-color) inset;
+  box-shadow: 0 0 2.2rem var(--hl-med-color) inset;
 }
 
 .tile-revealed {
   background-color: var(--hl-high-color);
-  box-shadow: 0 0 1.5em black inset;
+  box-shadow: 0 0 1.5rem black inset;
 }
 
 .tile-flagged img,
@@ -31,8 +31,9 @@
 }
 
 .tile-number {
-
-  font-size: 1em;
+  font-size: 3rem;
+  text-shadow: 0 0 .3rem var(--base-color);
+  overflow: hidden;
 }
 
 /* --- */
