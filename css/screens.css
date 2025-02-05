@@ -1,0 +1,20 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+#screen-mainmenu {
+  display: none;
+}
+
+#screen-help {
+  display: none;
+}
+
+#screen-game {
+  /* display: none; */
+}

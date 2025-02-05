@@ -1,0 +1,70 @@
+.tile {
+  width: 5em;
+  height: 5em;
+  border-radius: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tile-hidden {
+  background-color: var(--subtle-color);
+  box-shadow: 0 0 1em var(--hl-med-color) inset;
+}
+
+.tile-hidden:hover {
+  box-shadow: 0 0 2.2em var(--hl-med-color) inset;
+}
+
+.tile-revealed {
+  background-color: var(--hl-high-color);
+  box-shadow: 0 0 1.5em black inset;
+}
+
+.tile-flagged img,
+.tile-bomb img {
+  height: 60%;
+}
+
+.tile-hit {
+  background-color: var(--love-color);
+}
+
+.tile-number {
+
+  font-size: 1em;
+}
+
+/* --- */
+
+.tile-number-1 {
+  color: blue;
+}
+
+.tile-number-2 {
+  color: green;
+}
+
+.tile-number-3 {
+  color: red;
+}
+
+.tile-number-4 {
+  color: violet;
+}
+
+.tile-number-5 {
+  color: maroon;
+}
+
+.tile-number-6 {
+  color: cadetblue;
+}
+
+.tile-number-7 {
+  color: black;
+}
+
+.tile-number-8 {
+  color: grey;
+}

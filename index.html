@@ -10,14 +10,52 @@
 </head>
 
 <body>
-  <div id="screen-mainmenu">
-
+  <div class="screen" id="screen-mainmenu">
+    <h1>Minesweeper</h1>
+    <div id="difficulty-buttons-container">
+      <button class="difficulty-button" id="beginner-button">Beginner</button>
+      <button class="difficulty-button" id="intermediate-button">Intermediate</button>
+      <button class="difficulty-button" id="expert-button">Expert</button>
+    </div>
+    <button id="help-button">?</button>
   </div>
-  <div id="screen-help">
-
+  <div class="screen" id="screen-help">
+    <h2>About & Controls</h2>
+    <h3>Minesweeper clone by Joshua Tjhie</h3>
+    <p>Left click to open squares</p>
+    <p>Left click on an open tile to chord</p>
+    <p>Right click to flag a square</p>
+    <p>Spacebar to reset</p>
+    <button class="mainmenu-return-button">Return to Main Menu</button>
   </div>
-  <div id="screen-game">
-
+  <div class="screen" id="screen-game">
+    <div id="top-ui">
+      <span id="mine-counter">0</span>
+      <button class="mainmenu-return-button">Menu</button>
+      <button id="reset-button">RESET</button>
+      <span id="timer">00:00</span>
+    </div>
+    <div id="minesweeper-grid">
+      <div class="tile tile-hidden" data-row="0" data-col="0"></div>
+      <div class="tile tile-hidden tile-flagged" data-row="0" data-col="0">
+        <img src="assets/images/flag.png" alt="flag">
+      </div>
+      <div class="tile tile-revealed" data-row="0" data-col="0"></div>
+      <div class="tile tile-revealed tile-bomb" data-row="0" data-col="0">
+        <img src="assets/images/mine.png" alt="mine">
+      </div>
+      <div class="tile tile-revealed tile-bomb tile-hit" data-row="0" data-col="0">
+        <img src="assets/images/mine.png" alt="mine">
+      </div>
+      <div class="tile tile-revealed tile-number tile-number-1" data-row="0" data-col="0">1</div>
+      <div class="tile tile-revealed tile-number tile-number-2" data-row="0" data-col="0">2</div>
+      <div class="tile tile-revealed tile-number tile-number-3" data-row="0" data-col="0">3</div>
+      <div class="tile tile-revealed tile-number tile-number-4" data-row="0" data-col="0">4</div>
+      <div class="tile tile-revealed tile-number tile-number-5" data-row="0" data-col="0">5</div>
+      <div class="tile tile-revealed tile-number tile-number-6" data-row="0" data-col="0">6</div>
+      <div class="tile tile-revealed tile-number tile-number-7" data-row="0" data-col="0">7</div>
+      <div class="tile tile-revealed tile-number tile-number-8" data-row="0" data-col="0">8</div>
+    </div>
   </div>
 </body>
 
