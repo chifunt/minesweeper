@@ -18,3 +18,9 @@ button {
   border-radius: 1rem;
   padding: 1rem;
 }
+
+button:hover {
+  box-shadow: 0 0 1rem white;
+  color: white;
+  border: 0.3rem solid white;
+}
