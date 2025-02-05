@@ -269,7 +269,7 @@ function updateTileDOM(row, col, hit = false) {
       tile.classList.add("tile-bomb");
       // If this is the hit mine, add an extra class.
       if (hit) tile.classList.add("tile-hit");
-      tile.innerHTML = `<img src="assets/images/mine.png" alt="mine">`;
+      tile.innerHTML = `<img src="assets/images/mine.png" alt="mine" draggable="false">`;
     } else if (cell.number > 0) {
       tile.classList.add("tile-number");
       tile.classList.add(`tile-number-${cell.number}`);
@@ -281,7 +281,7 @@ function updateTileDOM(row, col, hit = false) {
     tile.classList.remove("tile-revealed", "tile-number", "tile-bomb");
     if (cell.flagged) {
       tile.classList.add("tile-flagged");
-      tile.innerHTML = `<img src="assets/images/flag.png" alt="flag">`;
+      tile.innerHTML = `<img src="assets/images/flag.png" alt="flag" draggable="false">`;
     } else {
       tile.classList.remove("tile-flagged");
       tile.innerHTML = "";
