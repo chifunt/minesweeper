@@ -37,6 +37,10 @@
   font-weight: bold;
 }
 
+.tile-highlight {
+  background-color: var(--hl-med-color);
+}
+
 /* --- */
 
 .tile-number-1 {
