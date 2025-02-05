@@ -1,15 +1,17 @@
 .tile {
   width: 5rem;
   height: 5rem;
-  border-radius: 1rem;
+  border-radius: 0.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 0.1rem solid var(--base-color);
 }
 
 .tile-hidden {
   background-color: var(--subtle-color);
   box-shadow: 0 0 1rem var(--hl-med-color) inset;
+  background-image: linear-gradient(to bottom, #fff, transparent);
 }
 
 .tile-hidden:hover {
@@ -21,6 +23,10 @@
   box-shadow: 0 0 1.5rem black inset;
 }
 
+.tile-flagged:hover {
+  box-shadow: 0 0 1rem var(--hl-med-color) inset;
+}
+
 .tile-flagged img,
 .tile-bomb img {
   height: 60%;
@@ -28,6 +34,10 @@
 
 .tile-hit {
   background-color: var(--love-color);
+}
+
+.tile-misflag {
+  background-color: var(--gold-color);
 }
 
 .tile-number {
