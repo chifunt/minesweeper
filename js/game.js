@@ -82,13 +82,32 @@ function updateTimer() {
   document.getElementById("timer").textContent = `${minutes}:${seconds}`;
 }
 
+function getTileSize(rows, cols) {
+  // You might reserve some vertical space for the UI (like the top UI)
+  // For example, assume the grid can use 80% of the viewport height.
+  const availableWidth = window.innerWidth;
+  const availableHeight = window.innerHeight * 0.8;
+
+  const tileWidth = availableWidth / cols;
+  const tileHeight = availableHeight / rows;
+
+  // Use the smaller value to keep a square tile (aspect-ratio 1:1).
+  return Math.floor(Math.min(tileWidth, tileHeight));
+}
+
 function renderGrid(r, c) {
   gridContainer.innerHTML = ""; // Clear previous grid
 
-  // Optionally, use CSS grid properties for layout:
+  // Compute the optimal tile size using the helper function.
+  const tileSize = getTileSize(r, c);
+
+  // Set a custom property on the grid container.
+  gridContainer.style.setProperty('--tile-size', tileSize + 'px');
+
+  // Set up the grid container using the computed tile size.
   gridContainer.style.display = "grid";
-  gridContainer.style.gridTemplateRows = `repeat(${r}, 5rem)`;
-  gridContainer.style.gridTemplateColumns = `repeat(${c}, 5rem)`;
+  gridContainer.style.gridTemplateRows = `repeat(${r}, ${tileSize}px)`;
+  gridContainer.style.gridTemplateColumns = `repeat(${c}, ${tileSize}px)`;
 
   for (let i = 0; i < r; i++) {
     for (let j = 0; j < c; j++) {
@@ -111,17 +130,33 @@ function renderGrid(r, c) {
 }
 
 function handleMouseDown(e) {
-  // If the game is over, ignore mouse events.
   if (gameOver) return;
 
   const tile = e.currentTarget;
   const row = parseInt(tile.dataset.row);
   const col = parseInt(tile.dataset.col);
-  // If this tile is flagged, do not apply any highlight.
+
+  // If this tile is flagged, do nothing.
   if (board[row][col].flagged) return;
 
-  tile.classList.add("tile-highlight");
+  // If the clicked tile is already revealed and is a number,
+  // highlight all surrounding hidden (and unflagged) neighbors.
+  if (board[row][col].revealed && board[row][col].number > 0) {
+    const neighbors = getNeighbors(row, col);
+    neighbors.forEach(([r, c]) => {
+      if (!board[r][c].revealed && !board[r][c].flagged) {
+        const neighborTile = document.querySelector(`.tile[data-row="${r}"][data-col="${c}"]`);
+        if (neighborTile) {
+          neighborTile.classList.add("tile-highlight");
+        }
+      }
+    });
+  } else {
+    // Otherwise, simply highlight the tile that was clicked.
+    tile.classList.add("tile-highlight");
+  }
 }
+
 
 function handleMouseUp(e) {
   // Do nothing if the game has ended.
@@ -336,3 +371,16 @@ function checkWinCondition() {
     gameOver = true;
   }
 }
+
+window.addEventListener("resize", () => {
+  if (board && !gameOver) {
+    // Re-render the grid with the current rows and cols
+    renderGrid(rows, cols);
+  }
+});
+
+document.addEventListener("mouseup", () => {
+  // Remove the highlight from any tile that might be highlighted.
+  const highlightedTiles = document.querySelectorAll(".tile-highlight");
+  highlightedTiles.forEach(tile => tile.classList.remove("tile-highlight"));
+});
