@@ -50,7 +50,7 @@
 
 .tile-number {
   font-size: calc(var(--tile-size) * 0.6);
-  text-shadow: 0 0 0.3rem var(--base-color);
+  text-shadow: 0 0 0.3rem var(--base-color), 0 0.2rem .5rem black;
   overflow: hidden;
   font-weight: bold;
 }
