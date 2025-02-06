@@ -1,7 +1,7 @@
 const sounds = {
   explosion: {
     src: "assets/audio/explosion.mp3",
-    volume: 0.5,
+    volume: 0.8,
     audio: null,
   },
   flagPlace: {
