@@ -3,7 +3,7 @@
  */
 
 import { initScreens, showScreen } from "./screens.js";
-import { initGame } from "./game.js";
+import { initGame } from "./gameController.js";
 import { initSounds } from "./sound.js";
 import { initUISounds } from "./uiSounds.js";
 
