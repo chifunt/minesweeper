@@ -5,6 +5,7 @@ import {
   floodFill,
 } from "./minefield.js";
 import { showScreen } from "./screens.js";
+import { playSound } from "./sound.js";
 
 let board = null; // the game board data (2D array of cells)
 let rows = 0;
@@ -37,6 +38,7 @@ export function initGame() {
   document.getElementById("reset-button").addEventListener("click", () => {
     document.getElementById("reset-button").classList.remove("gameover");
     // Restart the game with the same configuration
+    playSound("uiClick");
     if (currentDifficulty) {
       startNewGame(
         currentDifficulty.rows,
@@ -123,9 +125,16 @@ function renderGrid(r, c) {
       // Prevent default context menu on right-click.
       tile.addEventListener("contextmenu", (e) => e.preventDefault());
 
-      // Add mousedown and mouseup handlers.
+      // Add mouse event handlers.
       tile.addEventListener("mousedown", handleMouseDown);
       tile.addEventListener("mouseup", handleMouseUp);
+
+      // Add a tile hover listener only for hidden tiles.
+      tile.addEventListener("mouseenter", () => {
+        if (!gameOver && tile.classList.contains("tile-hidden")) {
+          playSound("tileHover");
+        }
+      });
 
       gridContainer.appendChild(tile);
     }
@@ -218,19 +227,21 @@ function handleMouseUp(e) {
 function revealTile(row, col) {
   if (board[row][col].flagged || board[row][col].revealed) return;
   if (board[row][col].mine) {
-    // Hit a mine – game over.
     board[row][col].revealed = true;
     updateTileDOM(row, col, true);
+    playSound("explosion"); // Play explosion sound
     revealAllMines();
     clearInterval(timerInterval);
     gameOver = true;
   } else if (board[row][col].number > 0) {
     board[row][col].revealed = true;
     updateTileDOM(row, col);
+    playSound("tileReveal"); // Play tile-reveal sound
   } else {
-    // Blank tile – perform flood fill.
+    // For blank tiles, you might also want to play the tile-reveal sound.
     const revealedCells = floodFill(board, row, col);
     revealedCells.forEach(([r, c]) => updateTileDOM(r, c));
+    playSound("tileReveal");
   }
 }
 
@@ -263,6 +274,7 @@ function toggleFlag(row, col) {
   if (board[row][col].revealed) return;
   board[row][col].flagged = !board[row][col].flagged;
   updateTileDOM(row, col);
+  playSound("flagPlace"); // Play flag placement sound
 }
 
 /**
@@ -381,6 +393,7 @@ function checkWinCondition() {
   }
   if (won) {
     document.getElementById("reset-button").classList.add("gameover");
+    playSound("gameWon");
     clearInterval(timerInterval);
     gameOver = true;
   }
