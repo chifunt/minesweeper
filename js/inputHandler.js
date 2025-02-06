@@ -106,6 +106,8 @@ export function revealTile(row, col) {
     revealAllMines();
     import("./timer.js").then(({ stopTimer }) => stopTimer());
     GameState.gameOver = true;
+    // Add the lose class instead of any generic class.
+    document.getElementById("reset-button").classList.add("lose");
   } else if (GameState.board[row][col].number > 0) {
     GameState.board[row][col].revealed = true;
     updateTileDOM(row, col);
@@ -198,7 +200,8 @@ export function checkWinCondition() {
     if (!won) break;
   }
   if (won) {
-    document.getElementById("reset-button").classList.add("gameover");
+    const resetButton = document.getElementById("reset-button");
+    resetButton.classList.add("win");
     playSound("gameWon");
     import("./timer.js").then(({ stopTimer }) => stopTimer());
     GameState.gameOver = true;

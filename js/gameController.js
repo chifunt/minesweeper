@@ -24,7 +24,9 @@ export function initGame() {
   });
 
   document.getElementById("reset-button").addEventListener("click", () => {
-    document.getElementById("reset-button").classList.remove("gameover");
+    const resetButton = document.getElementById("reset-button");
+    // Remove any previous win or lose classes.
+    resetButton.classList.remove("win", "lose");
     playSound("uiClick");
     if (GameState.currentDifficulty) {
       startNewGame(

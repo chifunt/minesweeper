@@ -9,6 +9,16 @@
   box-shadow: 0 0 0.5rem black, 0 0 0.2rem black inset;
 }
 
-#reset-button.gameover {
+#reset-button.win {
   color: var(--gold-color);
+  box-shadow: 0 0 0.5rem var(--gold-color), 0 0 0.2rem var(--gold-color) inset;
+  text-shadow: 0 0 0.3rem var(--gold-color);
+  border: 0.3rem solid var(--gold-color)
+}
+
+#reset-button.lose {
+  color: var(--love-color);
+  box-shadow: 0 0 0.5rem var(--love-color), 0 0 0.2rem var(--love-color) inset;
+  text-shadow: 0 0 0.3rem var(--love-color);
+  border: 0.3rem solid var(--love-color)
 }
