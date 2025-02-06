@@ -1,0 +1,18 @@
+#screen-mainmenu h1 {
+  font-size: 15rem;
+  color: var(--gold-color);
+  text-shadow: 0 0 1.5rem var(--gold-color);
+}
+
+#difficulty-buttons-container {
+  display: flex;
+  gap: 5rem;
+}
+
+.difficulty-button {
+  font-size: 7rem;
+}
+
+#help-button {
+  width: 10rem;
+}
