@@ -3,6 +3,7 @@
  * Handles the rendering and updating of the game grid.
  */
 import { GameState } from "./gameState.js";
+import { playSound } from "./sound.js";
 
 /**
  * Calculates the optimal tile size (in pixels) for the given grid dimensions.
@@ -29,7 +30,7 @@ export function renderGrid(rows, cols, tileEventHandlers) {
   gridContainer.innerHTML = "";
 
   const tileSize = getTileSize(rows, cols);
-  gridContainer.style.setProperty('--tile-size', `${tileSize}px`);
+  gridContainer.style.setProperty("--tile-size", `${tileSize}px`);
   gridContainer.style.display = "grid";
   gridContainer.style.gridTemplateRows = `repeat(${rows}, ${tileSize}px)`;
   gridContainer.style.gridTemplateColumns = `repeat(${cols}, ${tileSize}px)`;
@@ -47,7 +48,7 @@ export function renderGrid(rows, cols, tileEventHandlers) {
       tile.addEventListener("mouseup", tileEventHandlers.handleMouseUp);
       tile.addEventListener("mouseenter", () => {
         if (!GameState.gameOver && tile.classList.contains("tile-hidden")) {
-          // Optionally play a hover sound here.
+          playSound("tileHover");  // Play the hover sound
         }
       });
       gridContainer.appendChild(tile);
@@ -113,7 +114,7 @@ export function updateGrid() {
   const gridContainer = document.getElementById("minesweeper-grid");
   const { rows, cols } = GameState;
   const tileSize = getTileSize(rows, cols);
-  gridContainer.style.setProperty('--tile-size', `${tileSize}px`);
+  gridContainer.style.setProperty("--tile-size", `${tileSize}px`);
   gridContainer.style.gridTemplateRows = `repeat(${rows}, ${tileSize}px)`;
   gridContainer.style.gridTemplateColumns = `repeat(${cols}, ${tileSize}px)`;
 
