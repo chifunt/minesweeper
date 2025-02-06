@@ -399,10 +399,25 @@ function checkWinCondition() {
   }
 }
 
+function updateGrid() {
+  // Recalculate tile size
+  const tileSize = getTileSize(rows, cols);
+  gridContainer.style.setProperty('--tile-size', tileSize + 'px');
+  gridContainer.style.gridTemplateRows = `repeat(${rows}, ${tileSize}px)`;
+  gridContainer.style.gridTemplateColumns = `repeat(${cols}, ${tileSize}px)`;
+
+  // Update each tile based on the current board state.
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      updateTileDOM(i, j);
+    }
+  }
+}
+
 window.addEventListener("resize", () => {
   if (board && !gameOver) {
     // Re-render the grid with the current rows and cols
-    renderGrid(rows, cols);
+    updateGrid();
   }
 });
 
