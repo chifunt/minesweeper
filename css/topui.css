@@ -8,3 +8,7 @@
   padding: 1rem;
   box-shadow: 0 0 0.5rem black, 0 0 0.2rem black inset;
 }
+
+#reset-button.gameover {
+  color: var(--gold-color);
+}

@@ -35,6 +35,7 @@ export function initGame() {
 
   // Reset button
   document.getElementById("reset-button").addEventListener("click", () => {
+    document.getElementById("reset-button").classList.remove("gameover");
     // Restart the game with the same configuration
     if (currentDifficulty) {
       startNewGame(
@@ -379,6 +380,7 @@ function checkWinCondition() {
     if (!won) break;
   }
   if (won) {
+    document.getElementById("reset-button").classList.add("gameover");
     clearInterval(timerInterval);
     gameOver = true;
   }
