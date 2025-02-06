@@ -152,23 +152,31 @@ export function toggleFlag(row, col) {
 }
 
 /**
- * Reveals all mines on the board (called when the player loses).
+ * Reveals all mines on the board when the game is lost.
+ * Correctly flagged mines remain flagged (and unrevealed),
+ * while any unflagged mine is revealed. Incorrect flags are marked as misflags.
  */
 export function revealAllMines() {
   const { board, rows, cols } = GameState;
+
+  // Reveal only those mines that are NOT flagged.
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      if (board[r][c].mine && !board[r][c].revealed) {
+      if (board[r][c].mine && !board[r][c].revealed && !board[r][c].flagged) {
         board[r][c].revealed = true;
         updateTileDOM(r, c);
       }
     }
   }
-  for (let r = 0; r < GameState.rows; r++) {
-    for (let c = 0; c < GameState.cols; c++) {
-      if (GameState.board[r][c].flagged && !GameState.board[r][c].mine) {
+
+  // Mark misflagged tiles (those that are flagged but do not contain a mine).
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (board[r][c].flagged && !board[r][c].mine) {
         const tile = document.querySelector(`.tile[data-row="${r}"][data-col="${c}"]`);
-        tile?.classList.add("tile-misflag");
+        if (tile) {
+          tile.classList.add("tile-misflag");
+        }
       }
     }
   }
