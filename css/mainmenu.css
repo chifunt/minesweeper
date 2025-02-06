@@ -1,18 +1,19 @@
 #screen-mainmenu h1 {
-  font-size: 15rem;
+  font-size: 15vw;
   color: var(--gold-color);
   text-shadow: 0 0 1.5rem var(--gold-color);
 }
 
 #difficulty-buttons-container {
   display: flex;
-  gap: 5rem;
+  gap: 3vw;
 }
 
 .difficulty-button {
-  font-size: 7rem;
+  font-size: 4vw;
 }
 
 #help-button {
-  width: 10rem;
+  width: 7vw;
+  font-size: 2.5vw;
 }
