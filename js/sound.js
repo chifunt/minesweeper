@@ -1,3 +1,8 @@
+/**
+ * @module sound
+ * Provides functions for initializing and playing game sounds.
+ */
+
 const sounds = {
   explosion: {
     src: "assets/audio/explosion.mp3",
@@ -37,39 +42,36 @@ const sounds = {
 };
 
 /**
- * Initialize each sound by creating an Audio object.
+ * Initializes each sound by creating an Audio object.
  */
 function initSounds() {
-  for (const key in sounds) {
-    if (sounds.hasOwnProperty(key)) {
-      const sound = sounds[key];
-      sound.audio = new Audio(sound.src);
-      sound.audio.volume = sound.volume;
-    }
-  }
+  Object.keys(sounds).forEach((key) => {
+    const sound = sounds[key];
+    sound.audio = new Audio(sound.src);
+    sound.audio.volume = sound.volume;
+  });
 }
 
 /**
- * Play the specified sound.
+ * Plays the specified sound.
  * @param {string} name - The key name of the sound (e.g., "explosion").
  */
 function playSound(name) {
   const sound = sounds[name];
-  if (sound && sound.audio) {
-    // Reset the current time and play the sound.
+  if (sound?.audio) {
     sound.audio.currentTime = 0;
     sound.audio.play();
   }
 }
 
 /**
- * Set the volume for a specific sound.
+ * Sets the volume for a specific sound.
  * @param {string} name - The key name of the sound.
  * @param {number} volume - A number between 0.0 and 1.0.
  */
 function setVolume(name, volume) {
   const sound = sounds[name];
-  if (sound && sound.audio) {
+  if (sound?.audio) {
     sound.audio.volume = volume;
     sound.volume = volume;
   }

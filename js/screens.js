@@ -1,3 +1,12 @@
+/**
+ * @module screens
+ * Handles switching between the various screens in the UI.
+ */
+
+/**
+ * Displays the specified screen by its element ID.
+ * @param {string} screenId - The ID of the screen to display.
+ */
 export function showScreen(screenId) {
   document.querySelectorAll(".screen").forEach((screen) => {
     screen.style.display = "none";
@@ -5,30 +14,27 @@ export function showScreen(screenId) {
   document.getElementById(screenId).style.display = "flex";
 }
 
+/**
+ * Initializes event listeners for screen navigation.
+ */
 export function initScreens() {
-  // Main Menu difficulty buttons:
   document.getElementById("beginner-button").addEventListener("click", () => {
     const config = { rows: 8, cols: 8, mines: 10 };
-    const event = new CustomEvent("startGame", { detail: config });
-    document.dispatchEvent(event);
+    document.dispatchEvent(new CustomEvent("startGame", { detail: config }));
   });
   document.getElementById("intermediate-button").addEventListener("click", () => {
     const config = { rows: 16, cols: 16, mines: 40 };
-    const event = new CustomEvent("startGame", { detail: config });
-    document.dispatchEvent(event);
+    document.dispatchEvent(new CustomEvent("startGame", { detail: config }));
   });
   document.getElementById("expert-button").addEventListener("click", () => {
     const config = { rows: 16, cols: 30, mines: 99 };
-    const event = new CustomEvent("startGame", { detail: config });
-    document.dispatchEvent(event);
+    document.dispatchEvent(new CustomEvent("startGame", { detail: config }));
   });
 
-  // Help button – show the rules screen.
   document.getElementById("help-button").addEventListener("click", () => {
     showScreen("screen-help");
   });
 
-  // All return-to-mainmenu buttons:
   document.querySelectorAll(".mainmenu-return-button").forEach((button) => {
     button.addEventListener("click", () => {
       showScreen("screen-mainmenu");

@@ -1,3 +1,8 @@
+/**
+ * @module game
+ * Handles the main game logic for Minesweeper.
+ */
+
 import {
   createEmptyBoard,
   placeMines,
@@ -7,48 +12,37 @@ import {
 import { showScreen } from "./screens.js";
 import { playSound } from "./sound.js";
 
-let board = null; // the game board data (2D array of cells)
+/** @type {Array<Array<{revealed: boolean, flagged: boolean, mine: boolean, number: number}>>} */
+let board = null;
 let rows = 0;
 let cols = 0;
 let minesCount = 0;
 let firstClickDone = false;
-let currentDifficulty = null; // stores the configuration (rows, cols, mines)
+let currentDifficulty = null;
 let timerInterval = null;
 let startTime = null;
-let gameOver = false; // when true, no further moves are allowed
-
-// Global variable to keep track of the tile that was pressed down.
+let gameOver = false;
 let activeTile = null;
 
-// Cache the grid container
 const gridContainer = document.getElementById("minesweeper-grid");
 
+/**
+ * Initializes game event listeners.
+ */
 export function initGame() {
-  // Listen for our custom "startGame" event
   document.addEventListener("startGame", (e) => {
     currentDifficulty = e.detail;
-    startNewGame(
-      currentDifficulty.rows,
-      currentDifficulty.cols,
-      currentDifficulty.mines
-    );
+    startNewGame(currentDifficulty.rows, currentDifficulty.cols, currentDifficulty.mines);
   });
 
-  // Reset button
   document.getElementById("reset-button").addEventListener("click", () => {
     document.getElementById("reset-button").classList.remove("gameover");
-    // Restart the game with the same configuration
     playSound("uiClick");
     if (currentDifficulty) {
-      startNewGame(
-        currentDifficulty.rows,
-        currentDifficulty.cols,
-        currentDifficulty.mines
-      );
+      startNewGame(currentDifficulty.rows, currentDifficulty.cols, currentDifficulty.mines);
     }
   });
 
-  // Spacebar resets the game
   document.addEventListener("keydown", (e) => {
     if (e.code === "Space") {
       e.preventDefault();
@@ -57,60 +51,66 @@ export function initGame() {
   });
 }
 
-function startNewGame(r, c, mines) {
-  // Clear any running timer
+/**
+ * Starts a new game with the given configuration.
+ * @param {number} r - Number of rows.
+ * @param {number} c - Number of columns.
+ * @param {number} mines - Number of mines.
+ */
+const startNewGame = (r, c, mines) => {
   clearInterval(timerInterval);
   startTime = Date.now();
   timerInterval = setInterval(updateTimer, 1000);
   document.getElementById("timer").textContent = "00:00";
-  document.getElementById("mine-counter").textContent = mines;
+  document.getElementById("mine-counter").textContent = mines.toString();
 
   rows = r;
   cols = c;
   minesCount = mines;
   firstClickDone = false;
-  gameOver = false; // allow moves in the new game
+  gameOver = false;
   activeTile = null;
 
-  // Create an empty board (data only)
+  // Create a new, empty board (data only)
   board = createEmptyBoard(rows, cols);
-
-  // Render grid in DOM
   renderGrid(rows, cols);
-
-  // Switch to game screen
   showScreen("screen-game");
-}
+};
 
-function updateTimer() {
+/**
+ * Updates the game timer display.
+ */
+const updateTimer = () => {
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
   const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
   const seconds = String(elapsed % 60).padStart(2, "0");
   document.getElementById("timer").textContent = `${minutes}:${seconds}`;
-}
+};
 
-function getTileSize(rows, cols) {
-  // Reserve some vertical space for the UI (for example, assume 80% of viewport height)
+/**
+ * Calculates the optimal tile size based on viewport dimensions.
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {number} Tile size in pixels.
+ */
+const getTileSize = (rows, cols) => {
   const availableWidth = window.innerWidth;
-  const availableHeight = window.innerHeight * 0.8;
-
+  const availableHeight = window.innerHeight * 0.8; // Reserve some vertical space for UI
   const tileWidth = availableWidth / cols;
   const tileHeight = availableHeight / rows;
-
-  // Use the smaller value to keep a square tile (aspect-ratio 1:1).
   return Math.floor(Math.min(tileWidth, tileHeight));
-}
+};
 
-function renderGrid(r, c) {
-  gridContainer.innerHTML = ""; // Clear previous grid
+/**
+ * Renders the Minesweeper grid in the DOM.
+ * @param {number} r - Number of rows.
+ * @param {number} c - Number of columns.
+ */
+const renderGrid = (r, c) => {
+  gridContainer.innerHTML = ""; // Clear any previous grid
 
-  // Compute the optimal tile size.
   const tileSize = getTileSize(r, c);
-
-  // Set a custom property on the grid container (used by CSS for scaling, e.g., font-size).
-  gridContainer.style.setProperty('--tile-size', tileSize + 'px');
-
-  // Set up the grid container using the computed tile size.
+  gridContainer.style.setProperty("--tile-size", `${tileSize}px`);
   gridContainer.style.display = "grid";
   gridContainer.style.gridTemplateRows = `repeat(${r}, ${tileSize}px)`;
   gridContainer.style.gridTemplateColumns = `repeat(${c}, ${tileSize}px)`;
@@ -119,17 +119,15 @@ function renderGrid(r, c) {
     for (let j = 0; j < c; j++) {
       const tile = document.createElement("div");
       tile.classList.add("tile", "tile-hidden");
-      tile.dataset.row = i;
-      tile.dataset.col = j;
+      tile.dataset.row = i.toString();
+      tile.dataset.col = j.toString();
 
-      // Prevent default context menu on right-click.
+      // Prevent the default right-click context menu.
       tile.addEventListener("contextmenu", (e) => e.preventDefault());
-
-      // Add mouse event handlers.
       tile.addEventListener("mousedown", handleMouseDown);
       tile.addEventListener("mouseup", handleMouseUp);
 
-      // Add a tile hover listener only for hidden tiles.
+      // Add hover effect only for hidden tiles.
       tile.addEventListener("mouseenter", () => {
         if (!gameOver && tile.classList.contains("tile-hidden")) {
           playSound("tileHover");
@@ -139,148 +137,149 @@ function renderGrid(r, c) {
       gridContainer.appendChild(tile);
     }
   }
-}
+};
 
-function handleMouseDown(e) {
+/**
+ * Handles the mousedown event on a tile.
+ * @param {MouseEvent} e
+ */
+const handleMouseDown = (e) => {
   if (gameOver) return;
 
-  // Record the tile that was pressed.
   activeTile = e.currentTarget;
+  const row = parseInt(activeTile.dataset.row, 10);
+  const col = parseInt(activeTile.dataset.col, 10);
 
-  const row = parseInt(activeTile.dataset.row);
-  const col = parseInt(activeTile.dataset.col);
-
-  // If this tile is flagged, do nothing.
   if (board[row][col].flagged) return;
 
-  // If the clicked tile is already revealed and shows a number,
-  // highlight all surrounding hidden (and unflagged) neighbors.
+  // If the tile is already revealed and shows a number, highlight its neighbors.
   if (board[row][col].revealed && board[row][col].number > 0) {
-    const neighbors = getNeighbors(row, col);
-    neighbors.forEach(([r, c]) => {
+    getNeighbors(row, col).forEach(([r, c]) => {
       if (!board[r][c].revealed && !board[r][c].flagged) {
         const neighborTile = document.querySelector(`.tile[data-row="${r}"][data-col="${c}"]`);
-        if (neighborTile) {
-          neighborTile.classList.add("tile-highlight");
-        }
+        neighborTile?.classList.add("tile-highlight");
       }
     });
   }
-  // Otherwise, if the tile is unrevealed but its number is not zero,
-  // highlight it. (If the number is zero—that is, the tile is "empty"—do nothing.)
+  // Otherwise, if the tile is unrevealed but has a nonzero number, highlight it.
   else if (!board[row][col].revealed && board[row][col].number !== 0) {
     activeTile.classList.add("tile-highlight");
   }
-  // If it's empty (number === 0), then no highlight is added.
-}
+};
 
-function handleMouseUp(e) {
-  // Do nothing if the game has ended.
+/**
+ * Handles the mouseup event on a tile.
+ * @param {MouseEvent} e
+ */
+const handleMouseUp = (e) => {
   if (gameOver) return;
 
-  // Ensure the mouseup is on the same tile that received mousedown.
+  // Ensure mouseup occurred on the same tile that received mousedown.
   if (e.currentTarget !== activeTile) {
-    // Remove highlight from the current tile if any.
     e.currentTarget.classList.remove("tile-highlight");
     return;
   }
-
-  // Remove highlight from the active tile.
   activeTile.classList.remove("tile-highlight");
 
-  const row = parseInt(activeTile.dataset.row);
-  const col = parseInt(activeTile.dataset.col);
+  const row = parseInt(activeTile.dataset.row, 10);
+  const col = parseInt(activeTile.dataset.col, 10);
 
-  // If left-click on a flagged tile, do nothing.
+  // Left-click on a flagged tile does nothing.
   if (e.button === 0 && board[row][col].flagged) return;
 
   if (e.button === 0) {
-    // Left click
+    // On first left-click, place mines (excluding the clicked cell and its neighbors)
     if (!firstClickDone) {
-      // On first left-click, place mines (avoiding the clicked cell and its neighbors)
       board = placeMines(board, minesCount, row, col);
       board = calculateNumbers(board);
       firstClickDone = true;
     }
-
-    // If the tile is already revealed and is a number,
-    // perform a “chord” (if number of flagged neighbors equals the number)
+    // If the tile is already revealed, perform a chord reveal.
     if (board[row][col].revealed) {
       chordReveal(row, col);
     } else {
       revealTile(row, col);
     }
   } else if (e.button === 2) {
-    // Right click – toggle flag
+    // Right-click toggles a flag.
     toggleFlag(row, col);
   }
 
   updateMineCounter();
-  // Defer win-condition check to allow final flag UI update.
+  // Check win condition after a short delay to allow the UI to update.
   setTimeout(checkWinCondition, 0);
-}
+};
 
 /**
- * Reveals the tile at (row, col). If the tile is blank (number === 0),
- * uses floodFill to reveal adjacent tiles.
+ * Reveals the tile at (row, col). For blank tiles, a flood-fill is used.
+ * @param {number} row
+ * @param {number} col
  */
-function revealTile(row, col) {
+const revealTile = (row, col) => {
   if (board[row][col].flagged || board[row][col].revealed) return;
+
   if (board[row][col].mine) {
     board[row][col].revealed = true;
     updateTileDOM(row, col, true);
-    playSound("explosion"); // Play explosion sound
+    playSound("explosion");
     revealAllMines();
     clearInterval(timerInterval);
     gameOver = true;
   } else if (board[row][col].number > 0) {
     board[row][col].revealed = true;
     updateTileDOM(row, col);
-    playSound("tileReveal"); // Play tile-reveal sound
+    playSound("tileReveal");
   } else {
-    // For blank tiles, you might also want to play the tile-reveal sound.
+    // For blank (zero) cells, reveal adjacent blank areas.
     const revealedCells = floodFill(board, row, col);
     revealedCells.forEach(([r, c]) => updateTileDOM(r, c));
     playSound("tileReveal");
   }
-}
+};
 
 /**
- * Chording: if a revealed numbered tile has the same number of flags around it,
+ * If a revealed numbered tile has the correct number of flagged neighbors,
  * reveal all adjacent non-flagged tiles.
+ * @param {number} row
+ * @param {number} col
  */
-function chordReveal(row, col) {
+const chordReveal = (row, col) => {
   const cell = board[row][col];
   if (cell.number === 0) return;
-  const neighbors = getNeighbors(row, col);
-  const flaggedCount = neighbors.reduce((acc, [r, c]) => {
-    return acc + (board[r][c].flagged ? 1 : 0);
-  }, 0);
+
+  const flaggedCount = getNeighbors(row, col).reduce(
+    (acc, [r, c]) => acc + (board[r][c].flagged ? 1 : 0),
+    0
+  );
 
   if (flaggedCount === cell.number) {
-    neighbors.forEach(([r, c]) => {
+    getNeighbors(row, col).forEach(([r, c]) => {
       if (!board[r][c].revealed && !board[r][c].flagged) {
         revealTile(r, c);
       }
     });
   }
-}
+};
 
 /**
- * Toggle flag state on the cell at (row, col) and update its DOM.
+ * Toggles the flagged state on the tile at (row, col).
+ * @param {number} row
+ * @param {number} col
  */
-function toggleFlag(row, col) {
-  if (gameOver) return;
-  if (board[row][col].revealed) return;
+const toggleFlag = (row, col) => {
+  if (gameOver || board[row][col].revealed) return;
   board[row][col].flagged = !board[row][col].flagged;
   updateTileDOM(row, col);
-  playSound("flagPlace"); // Play flag placement sound
-}
+  playSound("flagPlace");
+};
 
 /**
- * Return an array of valid [row, col] neighbors of the cell at (row, col).
+ * Returns an array of valid [row, col] neighbors for the given cell.
+ * @param {number} row
+ * @param {number} col
+ * @returns {Array<[number, number]>}
  */
-function getNeighbors(row, col) {
+const getNeighbors = (row, col) => {
   const neighbors = [];
   for (let dr = -1; dr <= 1; dr++) {
     for (let dc = -1; dc <= 1; dc++) {
@@ -293,50 +292,46 @@ function getNeighbors(row, col) {
     }
   }
   return neighbors;
-}
+};
 
 /**
- * Update the mine counter in the UI.
+ * Updates the mine counter UI element.
  */
-function updateMineCounter() {
-  // Count how many flags are placed.
+const updateMineCounter = () => {
   let flagsPlaced = 0;
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       if (board[r][c].flagged) flagsPlaced++;
     }
   }
-  document.getElementById("mine-counter").textContent =
-    minesCount - flagsPlaced;
-}
+  document.getElementById("mine-counter").textContent = (minesCount - flagsPlaced).toString();
+};
 
 /**
- * Update the DOM element for the tile at (row, col) based on board state.
+ * Updates the DOM element for the tile at (row, col) based on its state.
+ * @param {number} row
+ * @param {number} col
+ * @param {boolean} [hit=false] - Indicates if this tile was the mine that was hit.
  */
-function updateTileDOM(row, col, hit = false) {
+const updateTileDOM = (row, col, hit = false) => {
   const cell = board[row][col];
-  // Use a selector that uniquely identifies the tile.
-  const tile = document.querySelector(
-    `.tile[data-row="${row}"][data-col="${col}"]`
-  );
+  const tile = document.querySelector(`.tile[data-row="${row}"][data-col="${col}"]`);
   if (!tile) return;
 
   if (cell.revealed) {
     tile.classList.remove("tile-hidden");
     tile.classList.add("tile-revealed");
-    tile.innerHTML = ""; // Clear any existing content.
+    tile.innerHTML = "";
+
     if (cell.mine) {
       tile.classList.add("tile-bomb");
-      // If this is the hit mine, add an extra class.
       if (hit) tile.classList.add("tile-hit");
       tile.innerHTML = `<img src="assets/images/mine.png" alt="mine" draggable="false">`;
     } else if (cell.number > 0) {
-      tile.classList.add("tile-number");
-      tile.classList.add(`tile-number-${cell.number}`);
-      tile.textContent = cell.number;
+      tile.classList.add("tile-number", `tile-number-${cell.number}`);
+      tile.textContent = cell.number.toString();
     }
   } else {
-    // Still hidden – show flag if flagged.
     tile.classList.add("tile-hidden");
     tile.classList.remove("tile-revealed", "tile-number", "tile-bomb");
     if (cell.flagged) {
@@ -347,13 +342,12 @@ function updateTileDOM(row, col, hit = false) {
       tile.innerHTML = "";
     }
   }
-}
+};
 
 /**
- * Reveal all mines (called when the game is lost).
+ * Reveals all mines on the board (called when the player loses).
  */
-function revealAllMines() {
-  // Reveal all hidden mines.
+const revealAllMines = () => {
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       if (board[r][c].mine && !board[r][c].revealed) {
@@ -362,25 +356,21 @@ function revealAllMines() {
       }
     }
   }
-  // Mark misflagged tiles (flagged but not mines).
+  // Highlight misflagged tiles (flagged but not mines).
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       if (board[r][c].flagged && !board[r][c].mine) {
-        const tile = document.querySelector(
-          `.tile[data-row="${r}"][data-col="${c}"]`
-        );
-        if (tile) {
-          tile.classList.add("tile-misflag");
-        }
+        const tile = document.querySelector(`.tile[data-row="${r}"][data-col="${c}"]`);
+        tile?.classList.add("tile-misflag");
       }
     }
   }
-}
+};
 
 /**
- * Check if the player has won (all non-mine cells revealed).
+ * Checks whether all non-mine cells have been revealed (win condition).
  */
-function checkWinCondition() {
+const checkWinCondition = () => {
   let won = true;
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
@@ -397,34 +387,30 @@ function checkWinCondition() {
     clearInterval(timerInterval);
     gameOver = true;
   }
-}
+};
 
-function updateGrid() {
-  // Recalculate tile size
+/**
+ * Updates the grid layout on window resize.
+ */
+const updateGrid = () => {
   const tileSize = getTileSize(rows, cols);
-  gridContainer.style.setProperty('--tile-size', tileSize + 'px');
+  gridContainer.style.setProperty("--tile-size", `${tileSize}px`);
   gridContainer.style.gridTemplateRows = `repeat(${rows}, ${tileSize}px)`;
   gridContainer.style.gridTemplateColumns = `repeat(${cols}, ${tileSize}px)`;
-
-  // Update each tile based on the current board state.
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
       updateTileDOM(i, j);
     }
   }
-}
+};
 
 window.addEventListener("resize", () => {
   if (board && !gameOver) {
-    // Re-render the grid with the current rows and cols
     updateGrid();
   }
 });
 
 document.addEventListener("mouseup", () => {
-  // Remove the highlight from any tile that might be highlighted.
-  // Clear any lingering highlights and reset the active tile.
   activeTile = null;
-  const highlightedTiles = document.querySelectorAll(".tile-highlight");
-  highlightedTiles.forEach(tile => tile.classList.remove("tile-highlight"));
+  document.querySelectorAll(".tile-highlight").forEach((tile) => tile.classList.remove("tile-highlight"));
 });
