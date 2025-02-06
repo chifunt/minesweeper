@@ -2,7 +2,8 @@
   font-size: 5vh;
 }
 
-#mine-counter, #timer {
+#mine-counter,
+#timer {
   background-color: var(--overlay-color);
   border-radius: 0.5rem;
   padding: 1rem;
@@ -21,4 +22,16 @@
   box-shadow: 0 0 0.5rem var(--love-color), 0 0 0.2rem var(--love-color) inset;
   text-shadow: 0 0 0.3rem var(--love-color);
   border: 0.3rem solid var(--love-color)
+}
+
+#mine-counter.win,
+#timer.win {
+  color: var(--gold-color);
+  text-shadow: 0 0 0.3rem var(--gold-color);
+}
+
+#mine-counter.lose,
+#timer.lose {
+  color: var(--love-color);
+  text-shadow: 0 0 0.3rem var(--love-color);
 }

@@ -25,8 +25,11 @@ export function initGame() {
 
   document.getElementById("reset-button").addEventListener("click", () => {
     const resetButton = document.getElementById("reset-button");
-    // Remove any previous win or lose classes.
+    // Remove any previous win or lose classes from reset button, mine counter, and timer.
     resetButton.classList.remove("win", "lose");
+    document.getElementById("mine-counter").classList.remove("win", "lose");
+    document.getElementById("timer").classList.remove("win", "lose");
+
     playSound("uiClick");
     if (GameState.currentDifficulty) {
       startNewGame(

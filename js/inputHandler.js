@@ -106,8 +106,11 @@ export function revealTile(row, col) {
     revealAllMines();
     import("./timer.js").then(({ stopTimer }) => stopTimer());
     GameState.gameOver = true;
-    // Add the lose class instead of any generic class.
+
+    // Add lose classes to the reset button, mine counter, and timer.
     document.getElementById("reset-button").classList.add("lose");
+    document.getElementById("mine-counter").classList.add("lose");
+    document.getElementById("timer").classList.add("lose");
   } else if (GameState.board[row][col].number > 0) {
     GameState.board[row][col].revealed = true;
     updateTileDOM(row, col);
@@ -202,6 +205,9 @@ export function checkWinCondition() {
   if (won) {
     const resetButton = document.getElementById("reset-button");
     resetButton.classList.add("win");
+    document.getElementById("mine-counter").classList.add("win");
+    document.getElementById("timer").classList.add("win");
+
     playSound("gameWon");
     import("./timer.js").then(({ stopTimer }) => stopTimer());
     GameState.gameOver = true;
