@@ -24,9 +24,8 @@ export function initGame() {
   });
 
   document.getElementById("reset-button").addEventListener("click", () => {
-    const resetButton = document.getElementById("reset-button");
     // Remove any previous win or lose classes from reset button, mine counter, and timer.
-    resetButton.classList.remove("win", "lose");
+    document.getElementById("reset-button").classList.remove("win", "lose");
     document.getElementById("mine-counter").classList.remove("win", "lose");
     document.getElementById("timer").classList.remove("win", "lose");
 
@@ -70,6 +69,9 @@ export function initGame() {
  */
 function startNewGame(rows, cols, mines) {
   stopTimer();
+  document.getElementById("reset-button").classList.remove("win", "lose");
+  document.getElementById("mine-counter").classList.remove("win", "lose");
+  document.getElementById("timer").classList.remove("win", "lose");
   // Set up and start the timer.
   const timerDisplayCallback = (elapsed) => {
     const minutes = String(Math.floor(elapsed / 60000)).padStart(2, "0");
